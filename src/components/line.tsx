@@ -22,7 +22,11 @@ const LineGraph: React.FC<LineGraphProps> = ({ labels, datasets, title }) => {
           type: 'line',
           data: {
             labels: labels,
-            datasets: datasets,
+            datasets: datasets.map((dataset, index) => ({
+              ...dataset,
+              borderColor: getBorderColor(index),
+              backgroundColor: 'transparent',
+            })),
           },
           options: {
             plugins: {
@@ -31,6 +35,27 @@ const LineGraph: React.FC<LineGraphProps> = ({ labels, datasets, title }) => {
                 text: title,
               },
             },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Months',
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Time (hours)',
+                },
+              },
+            },
+            interaction: {
+              mode: 'index',
+              intersect: false,
+              axis: 'x',
+            },
+            responsive: true,
+            maintainAspectRatio: false,
           },
         } as ChartConfiguration<'line'>);
       }
@@ -42,6 +67,11 @@ const LineGraph: React.FC<LineGraphProps> = ({ labels, datasets, title }) => {
       }
     };
   }, [chartContainer, labels, datasets, title]);
+
+  const getBorderColor = (index: number): string => {
+    const colors = ['#6DA8FF', '#FFCE50', '#FF8159', '#5FCCA0'];
+    return colors[index % colors.length];
+  };
 
   return <canvas ref={chartContainer} />;
 };
